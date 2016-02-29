@@ -1,3 +1,3 @@
 # Machine Learning
 
-`nnScript.py` : Handwritten Digits Classification Using Neural Networks
+- `nnScript.py` : **Handwritten Digits Classification Using Neural Networks**
