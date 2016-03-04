@@ -125,6 +125,35 @@ def preprocess():
     validation_data /= 255
     test_data /= 255
 
+    # Feature Selection
+
+    redundant_features = []
+    redundant_features_counter = 0
+    for col in train_data.T:
+        if np.sum(col) == 0:
+            redundant_features.append(redundant_features_counter)
+        redundant_features_counter += 1
+
+    redundant_features_validation = []
+    redundant_features_counter = 0
+    for col in validation_data.T:
+        if np.sum(col) == 0:
+            redundant_features_validation.append(redundant_features_counter)
+        redundant_features_counter += 1
+
+    redundant_features_test = []
+    redundant_features_counter = 0
+    for col in train_data.T:
+        if np.sum(col) == 0:
+            redundant_features_test.append(redundant_features_counter)
+        redundant_features_counter += 1
+
+    redundant_features_indices = np.intersect1d(np.intersect1d(redundant_features,redundant_features_validation), redundant_features_test)
+
+    train_data = np.delete(train_data,redundant_features_indices,1)
+    validation_data = np.delete(validation_data,redundant_features_indices,1)
+    test_data = np.delete(test_data,redundant_features_indices,1)
+
     return train_data, train_label, validation_data, validation_label, test_data, test_label
 
 
@@ -223,8 +252,6 @@ def nnObjFunction(params, *args):
 
     # Regularization in Neural Network
 
-    lambdaval = 0
-
     reg_err_func_param1 = (lambdaval / (2*len(training_data))) * (np.sum(np.square(w1)) + np.sum(np.square(w2)))
     reg_err_func_final = err_fn_scalar_normalized + reg_err_func_param1
 
@@ -257,7 +284,6 @@ def nnPredict(w1,w2,data):
     % label: a column vector of predicted labels"""
 
     labels = np.array([])
-    #Your code here
 
     data_bias = np.ones((data.shape[0], 1))
 
