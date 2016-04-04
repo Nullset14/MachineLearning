@@ -66,9 +66,23 @@ def ldaTest(means,covmat,Xtest,ytest):
     # acc - A scalar accuracy value
     
     # IMPLEMENT THIS METHOD
-
     acc = 0
-    return acc
+    ypred = []
+    for i in range(0, len(Xtest)):
+        y = []
+        for j in range(0, means.shape[1]):
+            y.append(np.exp(-0.5 * np.dot(Xtest[i] - means.T[j], np.dot(np.linalg.inv(covmat), (Xtest[i] - means.T[j])))) * \
+            1/(np.sqrt(2 * np.pi) ** Xtest.shape[1] * np.sqrt(np.linalg.det(covmat))))
+
+        ypred.append(np.argmax(y, 0) + 1)
+
+        if ypred[-1] == ytest[i][0]:
+            acc += 1
+
+    acc = 100 * acc/len(ytest)
+    ypred = np.array(ypred)
+
+    return acc, ypred
 
 def qdaTest(means,covmats,Xtest,ytest):
     # Inputs
@@ -79,8 +93,22 @@ def qdaTest(means,covmats,Xtest,ytest):
     # acc - A scalar accuracy value
     
     # IMPLEMENT THIS METHOD
-    acc = 0
-    return acc
+    acc = 0.0
+    ypred = []
+    for i in range(0, len(Xtest)):
+        y = []
+        for j in range(0, means.shape[1]):
+            y.append(
+                np.exp(-0.5 * np.dot(Xtest[i] - means.T[j], np.dot(np.linalg.inv(covmats[j]), (Xtest[i] - means.T[j])))) * \
+                1 / (np.sqrt(2 * np.pi) ** Xtest.shape[1] * np.sqrt(np.linalg.det(covmats[j]))))
+
+        ypred.append(np.argmax(y, 0) + 1)
+
+        if ypred[-1] == ytest[i][0]:
+            acc += 1
+
+    acc = 100 * acc/len(ytest)
+    return acc, np.array(ypred)
 
 def learnOLERegression(X,y):
     # Inputs:                                                         
