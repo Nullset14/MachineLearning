@@ -27,9 +27,9 @@ def ldaLearn(X,y):
         means.append(np.mean(X[label_indices], axis=0))
 
     means = np.transpose(means)
-    covmats = np.cov(X.T)
+    covmat = np.cov(X.T)
 
-    return means, covmats
+    return means, covmat
 
 def qdaLearn(X,y):
     # Inputs
@@ -127,24 +127,19 @@ def regressionObjVal(w, X, y, lambd):
     # IMPLEMENT THIS METHOD
     # error_grad is a 1d vector
 
-    #n1 = X.shape[0]
-    # print(w.shape)
-    #print(X.shape)
-    # print(lambd)
-    #print(y.shape)
-    #w = np.reshape(w, (w.shape[0], 1))
-    w = np.array(w)
-    w = np.row_stack(w.flatten())
+    w = np.row_stack(np.array(w).flatten())
+
     x1 = np.dot(X, w)
-    diff = np.subtract(y,x1)
+    diff = np.subtract(y, x1)
+
     x = np.dot(np.transpose(diff), diff)
     y1 = lambd * np.dot(np.transpose(w), w)
-    error = 1/X.shape[0] * (np.add(x,y1))
-    #print(error.flatten().shape)
+    error = 0.5 * (np.add(x, y1))
+
     param_XTX = np.dot(np.transpose(X), X)
     param_XTY = np.dot(np.transpose(X), y)
+
     error_grad = np.subtract(np.dot(param_XTX, w), param_XTY) + lambd * w
-    #print(error_grad.shape)
     return error, error_grad.flatten()
 
 def mapNonLinear(x,p):
@@ -154,11 +149,11 @@ def mapNonLinear(x,p):
     # Outputs:                                                                 
     # Xd - (N x (d+1))                                                         
     # IMPLEMENT THIS METHOD
-    Xd = np.ones((x.shape[0],1))
-    for pow in range(1,p+1):
-        Xi = np.reshape(np.power(x,pow),(x.shape[0],1))
-        Xd = np.hstack((Xd,Xi))
-    return Xd
+    xd = np.ones((x.shape[0], 1))
+    for pow in range(1, p+1):
+        xi = np.reshape(np.power(x, pow), (x.shape[0], 1))
+        xd = np.hstack((xd, xi))
+    return xd
 
 # Main script
 
@@ -226,9 +221,10 @@ for lambd in lambdas:
     rmses3[i] = testOLERegression(w_l, Xtest_i, ytest)
     i = i + 1
 
-#plt.plot(lambdas, rmses3)
+plt.plot(lambdas, rmses3)
+plt.show()
 
-#rmses3 = 0.05
+# optimal rmses3 = 0.05
 
 # Problem 4
 
@@ -249,6 +245,7 @@ plt.plot(lambdas, rmses4)
 plt.show()
 
 # Problem 5
+
 pmax = 7
 lambda_opt = 0.05 #lambdas[np.argmin(rmses4)]
 rmses5 = np.zeros((pmax, 2))
@@ -256,8 +253,9 @@ for p in range(pmax):
     Xd = mapNonLinear(X[:, 2], p)
     Xdtest = mapNonLinear(Xtest[:, 2], p)
     w_d1 = learnRidgeRegression(Xd, y, 0)
-    rmses5[p,0] = testOLERegression(w_d1, Xdtest, ytest)
+    rmses5[p, 0] = testOLERegression(w_d1, Xdtest, ytest)
     w_d2 = learnRidgeRegression(Xd, y, lambda_opt)
-    rmses5[p,1] = testOLERegression(w_d2, Xdtest, ytest)
+    rmses5[p, 1] = testOLERegression(w_d2, Xdtest, ytest)
 plt.plot(range(pmax), rmses5)
+plt.show()
 plt.legend(('No Regularization', 'Regularization'))
