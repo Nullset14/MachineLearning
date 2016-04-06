@@ -26,7 +26,6 @@ def ldaLearn(X,y):
 
     means = np.transpose(means)
     covmat = np.cov(X.T)
-    print(covmat)
 
     return means, covmat
 
